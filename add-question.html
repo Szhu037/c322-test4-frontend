@@ -152,11 +152,11 @@
             message = "The question was added successfully!";
           } else {
             message =
-              "Something went wrong! Signup and logging in are required and need to be done first.";
+              "Signup and logging in are required and need to be done first in order to add a question.";
           }
         } else {
           console.log(response);
-          message = "Something went wrong! Question data could not be saved. You need to signup and sign in first.";
+          message = "You need to signup and sign in first to add a question.";
         }
         alert(message);
         location.href = "add-question.html";
