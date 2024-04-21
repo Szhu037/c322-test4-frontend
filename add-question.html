@@ -57,14 +57,21 @@
     </form>
 
     <div id="list" class="cards"></div>
-
+    
     <script>
       let host = "http://localhost:8080";
       let questions = [];
       displayTheQuestions();
 
       async function getAll() {
-        let response = await fetch(host + "/questions");
+  
+        let response = await fetch(host + "/questions", { 
+            method: 'GET', 
+            headers: new Headers({
+                'Authorization': 'Bearer ' +  getCookie('jwtToken')
+            })
+        });
+
         let result = await response.json();
         return result;
       }
@@ -133,6 +140,7 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization': 'Bearer ' +  getCookie('jwtToken')
           },
           body: JSON.stringify(question),
         };
@@ -159,6 +167,9 @@
         formData.append("file", imageFile);
         let request = {
           method: "POST",
+          headers: {
+            'Authorization': 'Bearer ' +  getCookie('jwtToken')
+          },
           body: formData,
         };
         let response = await fetch(
@@ -167,6 +178,12 @@
         );
         let result = await response.json();
         return result;
+      }
+
+      function getCookie(name) {
+        function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+        var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+        return match ? match[1] : null;
       }
     </script>
   </body>

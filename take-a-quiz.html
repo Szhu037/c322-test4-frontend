@@ -27,7 +27,12 @@
         displayTheQuizzes();
   
         async function getAll() {
-          let response = await fetch(host + "/quizzes");
+          let response = await fetch(host + "/quizzes",{ 
+            method: 'GET', 
+            headers: new Headers({
+                'Authorization': 'Bearer ' +  getCookie('jwtToken')
+            })
+          });
           let result = await response.json();
           return result;
         }
@@ -57,6 +62,11 @@
             div.innerHTML = innerHtml;
             list.appendChild(div);
           }
+        }
+        function getCookie(name) {
+          function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+          var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+          return match ? match[1] : null;
         }
         </script>
 

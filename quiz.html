@@ -42,7 +42,13 @@
       startTheQuiz();
 
       async function startTheQuiz() {
-        let response = await fetch(host + "/quizzes/" + id);
+        let response = await fetch(host + "/quizzes/" + id,{ 
+            method: 'GET', 
+            headers: new Headers({
+                'Authorization': 'Bearer ' +  getCookie('jwtToken')
+            })
+          }
+        );
         quiz = await response.json();
         await displayTheQuestion(0);
       }
@@ -132,6 +138,11 @@
              `;
         div.innerHTML = innerHtml;
         item.appendChild(div);
+      }
+      function getCookie(name) {
+          function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+          var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+          return match ? match[1] : null;
       }
     </script>
   </body>
