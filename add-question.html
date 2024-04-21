@@ -152,11 +152,11 @@
             message = "The question was added successfully!";
           } else {
             message =
-              "Something went wrong! Question data was saved successfully but question image was not saved.";
+              "Something went wrong! Signup and logging in are required and need to be done first.";
           }
         } else {
           console.log(response);
-          message = "Something went wrong! Question data could not be saved.";
+          message = "Something went wrong! Question data could not be saved. You need to signup and sign in first.";
         }
         alert(message);
         location.href = "add-question.html";
