@@ -6,13 +6,18 @@
         <title>Form</title>
       </head>
       <body>
-        <ul class="topnav">
-            <li><a  href="index.html">Home</a></li>
-            <li><a href="add-question.html">Add questions</a></li>
-            <li><a href="make-a-quiz.html">Create a quiz</a></li>
-            <li><a href="take-a-quiz.html">Take a quiz</a></li>
-            <li class="right"><a class="active" href="login.html">Login</a></li>
-          </ul>
+        <table width="70%">
+          <tr>
+            <td>
+              <ul class="topnav">
+                <li><a href="index.html"><img src="http://127.0.0.1:5500/images/final-project.png"/></a></li>
+                <li class="right"><a href="login.html">Login</a></li>
+                <li class="right"><a href="">Help</a></li>
+                <li class="right"><a href="traceorder.html">Track Order</a></li>
+              </ul>
+           </td>
+          </tr>
+        </table>
         <div class="login-wrap">
           <div class="login-html">
             <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
@@ -41,20 +46,20 @@
               </div>
               <div class="sign-up-htm">
                 <div class="group">
-                  <label for="user" class="label">Username</label>
-                  <input id="user" type="text" class="input">
+                  <label for="user2" class="label">Username</label>
+                  <input id="user2" type="text" class="input">
                 </div>
                 <div class="group">
-                  <label for="pass" class="label">Password</label>
-                  <input id="pass" type="password" class="input" data-type="password">
+                  <label for="pass2" class="label">Password</label>
+                  <input id="pass2" type="password" class="input" data-type="password">
                 </div>
                 <div class="group">
-                  <label for="pass" class="label">Repeat Password</label>
-                  <input id="pass" type="password" class="input" data-type="password">
+                  <label for="pass3" class="label">Repeat Password</label>
+                  <input id="pass3" type="password" class="input" data-type="password">
                 </div>
                 <div class="group">
-                  <label for="pass" class="label">Email Address</label>
-                  <input id="pass" type="text" class="input">
+                  <label for="email2" class="label">Email Address</label>
+                  <input id="email2" type="text" class="input">
                 </div>
                 <div class="group">
                   <input type="submit"  class="button" value="Sign Up" onclick="signup()">
@@ -67,5 +72,106 @@
             </div>
           </div>
         </div>
+        <script>
+          let host = "http://localhost:8080";
+          let toSignup = get("signup");
+          if(toSignup == null){
+             document.getElementById("tab-1").checked = true;
+             document.getElementById("tab-2").checked = false;
+          } else {
+             document.getElementById("tab-1").checked = false;
+             document.getElementById("tab-2").checked = true;
+          }
+          async function signup() {
+            let endpoint = host + "/signup";
+            let user2 = document.getElementById("user2").value.trim();
+            let pass2 = document.getElementById("pass2").value.trim();
+            let pass3 = document.getElementById("pass3").value.trim();
+            let email2 = document.getElementById("email2").value.trim();
+            if(user2.length == 0){
+              alert("Username is required.");
+              return false;
+            }
+            if(pass2.length == 0){
+              alert("Password is required.");
+              return false;
+            }
+            if(pass2 !=pass3) {
+              alert("Password confirmation doesn't match with original password.");
+              return false;
+            }
+            if(email2.length == 0){
+              alert("Email is required.");
+              return false;
+            }
+            let request = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({"username": user2, "password": pass2, "email": email2}),
+              };
+            
+    
+            let response = await fetch(endpoint, request);
+            if(response.status == 200) {
+              alert("You registered successfully! Please login.");
+              document.getElementById("tab-1").checked = true;
+            }
+            else {
+              alert("You didn't register successfully. Something went wrong.")
+            }
+          }
+
+          async function login() {
+            let endpoint = host + "/login";
+            let user = document.getElementById("user").value.trim();
+            let pass = document.getElementById("pass").value.trim();
+            if(user.length == 0){
+              alert("Username is required.");
+              return false;
+            }
+            if(pass.length == 0){
+              alert("Password is required.");
+              return false;
+            }
+          
+            let request = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({"username": user, "password": pass}),
+              };
+            
+    
+            let response = await fetch(endpoint, request);
+            if(response.status == 200) {
+              alert("Logged in successfully.");
+              let result = await response.json();
+              document.cookie = "jwtToken=" + result.jwtToken;
+              document.cookie = "userId=" + result.userId;
+  
+              if(localStorage.getItem("flowerId") ==null){
+                location.href="index.html";
+              } else {
+                location.href="placeorder.html";
+              }
+             
+            }
+            else {
+              alert("Login failed.");
+            }
+          }
+          function get(name){
+            if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+                return decodeURIComponent(name[1]);
+          }
+          function getCookie(name) {
+            function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+            return match ? match[1] : null;
+          }
+        </script>
       </body>
 </html>

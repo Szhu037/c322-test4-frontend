@@ -5,17 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="cards.css">
   </head>
 
   <body>
-    <ul class="topnav">
-      <li><a class="active" href="index.html">Home</a></li>
-      <li><a href="add-question.html">Add questions</a></li>
-      <li><a href="make-a-quiz.html">Create a quiz</a></li>
-      <li><a href="take-a-quiz.html">Take a quiz</a></li>
-      <li class="right"><a href="login.html">Login</a></li>
-    </ul>
+    <table width="70%">
+      <tr>
+        <td>
+          <ul class="topnav">
+            <li><a href="index.html"><img src="http://127.0.0.1:5500/images/final-project.png"/></a></li>
+            <li class="right"><a href=""><img id="cart" src="" width="30px"/></a></li>
+            <li class="right"><a href="login.html">Login</a></li>
+            <li class="right"><a href="">Help</a></li>
+            <li class="right"><a href="traceorder.html">Track Order</a></li>
+          </ul>
+       </td>
+      </tr>
+    </table>
+    <table width="70%">
+      
+      <tr>
+        <td width="80%" bgcolor="#e7b6aa">
+           <h2>Send Her Blooms</h2>
+           <h3>-------</h3>
+           <h5>She will love! Shop All Mother's Day Flowers and Gifts!</h5>
+        </td>
+        <td width="30%"><img src="http://127.0.0.1:5500/images/mixed.jpg" height="200"/></td>
+      </tr>
+      <tr>
+        <td>
+          <h4>
+            <b>FILTER BY</b> &nbsp;&nbsp;&nbsp; 
+            <label for="type">Flower Type</label>
+            <select name="type" id="type" onchange="filterByType()">
+              <option value=""></option>
+              <option value="mixed">mixed</option>
+              <option value="roses">roses</option>
+              <option value="tulips">tulips</option>
+              <option value="dasies">dasies</option>
+            </select>
+            <label for="occasion">Occasion</label>
+            <select name="occasion" id="occasion" onchange="filterByOccasion()">
+              <option value=""></option>
+              <option value="Mother's day">Mother's day</option>
+              <option value="birthday">birthday</option>
+              <option value="thank you">thank you</option>
+            </select>
+            <label for="color">Color</label>
+            <select name="color" id="color" onchange="filterByColor()">
+              <option value=""></option>
+              <option value="mixed">mixed</option>
+              <option value="red">red</option>
+              <option value="yellow">yellow</option>
+              <option value="green">green</option>
+              <option value="orange">orange</option>
+            </select>
+          </h4>
+        </td>
+        <td>
+          <h4>
+            <label for="sort">Sort</label>
+            <select name="sort" id="sort" onchange="sort()">
+              <option value=""></option>
+              <option value="LowToHigh">Low To High</option>
+              <option value="HighToLow">High To Low</option>
+            </select>
+          </h4>
 
-   
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div id="list" class="cards"></div>
+        </td>
+      </tr>
+    </table>
+
+    <script>
+      let host = "http://localhost:8080";
+      let flowers = [];
+      let sortBy = "";
+      let type = "";
+      let color = "";
+      let occasion = "";
+      let flowerId = localStorage.getItem("flowerId");
+  
+      displayFlowers();
+      async function getAll() {
+        let response = await fetch(host + "/flowers?sortBy="+sortBy+"&type="+type+"&color="+color+"&occasion="+occasion);
+        let result = await response.json();
+        return result;
+      }
+
+      async function displayFlowers() {
+        if(flowerId == null){
+           document.getElementById("cart").src = "http://localhost:5500/images/cart0.jpg";
+        } else {
+          document.getElementById("cart").src = "http://localhost:5500/images/cart1.jpg";
+        }
+        flowers = await getAll();
+        let list = document.getElementById("list");
+        list.innerHTML = "";
+
+        for (let flower of flowers) {
+          let div = document.createElement("div");
+          div.className = "card";
+          div.onclick = function(){
+            order(flower.id,flower.icon_file_name);
+          };
+          let innerHtml = `
+          <img src="http://localhost:5500/images/${flower.icon_file_name}" alt="flower" style="width:100%">
+          <h4>${flower.name} &nbsp; </h4>
+          <h4>From $${flower.price}</h4>
+          `;
+       
+          div.innerHTML = innerHtml;
+          list.appendChild(div);
+        }
+      }
+      async function sort() {
+        sortBy = document.getElementById("sort").value;
+        displayFlowers();
+      }
+      async function filterByType() {
+        type = document.getElementById("type").value;
+        displayFlowers();
+      }
+      async function filterByOccasion() {
+        occasion= document.getElementById("occasion").value;
+        displayFlowers();
+      }
+      async function filterByColor() {
+        color= document.getElementById("color").value;
+        displayFlowers();
+      }
+      async function order(flowerId){
+        location.href="/order.html?flowerId="+flowerId;
+      }
+      function getCookie(name) {
+        function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+        var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+        return match ? match[1] : null;
+      }
+    </script>
   </body>
 </html>

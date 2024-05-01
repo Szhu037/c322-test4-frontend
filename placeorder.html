@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="cards.css">
+    <style>
+      .button {
+        background-color: #04AA6D;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+
+      td, div {
+            vertical-align: top;
+        }
+    
+    </style>
+  </head>
+
+  <body>
+    <table width="70%">
+      <tr>
+        <td>
+          <ul class="topnav">
+            <li><a href="index.html"><img src="http://127.0.0.1:5500/images/final-project.png"/></a></li>
+            <li class="right"><a href=""><img id="cart" src="" width="30px"/></a></li>
+            <li class="right"><a href="login.html">Login</a></li>
+            <li class="right"><a href="">Help</a></li>
+            <li class="right"><a href="traceorder.html">Track Order</a></li>
+          </ul>
+       </td>
+      </tr>
+      <tr>
+        <td align="center">
+            <img id="reviewImg" src="http://127.0.0.1:5500/images/delivery.png"/><br>
+         </td>
+      </tr>
+    </table>
+
+    <table width="70%" >
+        <tr>
+         <td ><img id="image" src="" height="200" align="right"/>
+         </td>
+         <td>
+           <table>
+            <tr>
+                <td><h4 id="flowerInfo"></h4><br></td>
+            </tr>
+            <tr>
+                <td>Delivery Date<br><h4 id="deliveryDate"></h4></td>
+            </tr>
+            <tr>
+                <td>ITEM PRICING<br><h4 id="price"></h4></td>
+            </tr>
+        
+            <tr>
+               <td>Delivery Address<br><h3 id="address"></h3></td>
+            </tr>
+            <tr id="savingMsg">
+              <td><div class="card2"><p><br></p><p></p><p></p>You are saving $10.00 on this order!</div></td>
+            </tr>
+            <tr>
+                <td id="details">
+                </td>
+            </tr>
+            <tr>
+              <td>
+                <p></p>
+                <p></p>
+                <p></p>
+                <buttom type="button" class="button" onclick="placeOrder();">PLACE ORDER</buttom> Taxes and delivery calculated later.
+              </td>
+            </tr>
+          </table>
+         </td>
+         </tr>
+      </table>
+    <script>
+
+       let host = "http://localhost:8080";
+       let flowerId = localStorage.getItem("flowerId");
+       let firstName = localStorage.getItem("firstName");
+       let lastName = localStorage.getItem("lastName");
+       let address = localStorage.getItem("address");
+       let city = localStorage.getItem("city");
+       let state = localStorage.getItem("state");
+       let deliveryDate = localStorage.getItem("deliveryDate");
+       let zipcode =  localStorage.getItem("zipcode");
+       let purchasingOption = localStorage.getItem("purchasingOption");
+       let relationship = localStorage.getItem("relationship");
+       let onetime_purchase = false;
+       let price = '';
+       if(purchasingOption === "oneTime"){
+          onetime_purchase = true;
+       }
+
+
+       loadFlower(flowerId);
+       
+       function login(){
+         location.href="login.html";
+       }
+       function signUp(){
+         location.href="login.html?signup=true";
+       }
+       function getCookie(name) {
+        function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+        var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+        return match ? match[1] : null;
+      }
+
+      async function loadFlower(flowerId){
+        if(flowerId == null){
+           document.getElementById("cart").src = "http://localhost:5500/images/cart0.jpg";
+        } else {
+          document.getElementById("cart").src = "http://localhost:5500/images/cart1.jpg";
+        }
+        let response = await fetch(host + "/flowers/"+flowerId);
+        let flower = await response.json();
+
+        document.getElementById("flowerInfo").innerHTML = flower.name;
+        document.getElementById("image").setAttribute("src","http://127.0.0.1:5500/images/"+flower.icon_file_name);
+
+        if(purchasingOption === "oneTime") {
+           price = Number(flower.price + 25 - 10).toFixed(2);
+           document.getElementById("savingMsg").style.visibility = "visible";
+           let msg = "SUBTOTAL:         $"+ flower.price + "<br>"
+            + "Delivery:             $25.00 <br>"
+            + "Delivery Discount:          $-10.00 <br>"
+            + "TAX:               $0.0 <br>"
+            + "ORDER TOTAL:         $" + price;
+            document.getElementById("details").innerHTML= msg;
+        } else {
+           price = Number(flower.price * 0.7).toFixed(2);
+           document.getElementById("savingMsg").style.visibility = "hidden";
+           let msg = "SUBTOTAL:         $"+ price + "<br>"
+            + "TAX:               $0.0 <br>"
+            + "ORDER TOTAL:         $" + price;
+            document.getElementById("details").innerHTML= msg;
+        }
+
+        document.getElementById("price").innerHTML = "$" + price;
+
+        document.getElementById("address").innerHTML = firstName + " " + lastName
+          + "<br>" + address + "<br>" + city + " " + state + " " + zipcode;
+        document.getElementById("deliveryDate").innerHTML = deliveryDate;
+
+      }
+      async function placeOrder(){
+    
+        if(getCookie("jwtToken") == null){
+            alert("Please login first.");
+            location.href="login.html";
+            return false;
+        }
+        let request = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getCookie("jwtToken")
+            },
+            body: JSON.stringify({
+                "first_name": firstName, "last_name": lastName,
+                "relationship": relationship,
+                "customer_id": getCookie("userId"),
+                "address": address,
+                "city": city,
+                "state": state,
+                "zipcode": zipcode,
+                "final_price": parseFloat(price).toFixed(2),
+                "delivery_date": deliveryDate,
+                "flower_id": flowerId,
+                "onetime_purchase": onetime_purchase
+             })
+        };
+
+        let response = await fetch(host + "/orders", request);
+        if(response.status == 200) {
+            alert("Your order was placed successfully!");
+            localStorage.removeItem("firstName");
+            localStorage.removeItem("lastName");
+            localStorage.removeItem("relationship");
+            localStorage.removeItem("address");
+            localStorage.removeItem("suite");
+            localStorage.removeItem("city");
+            localStorage.removeItem("state");
+            localStorage.removeItem("zipcode");
+            localStorage.removeItem("flowerId");
+            localStorage.removeItem("deliveryDate");
+            localStorage.removeItem("purchasingOption");
+            localStorage.removeItem("relationship");
+            localStorage.removeItem("suite");
+            location.href="traceorder.html";
+        }
+        else {
+            alert("Your order was not placed successfully. Something went wrong.")
+        }
+      }
+    </script>
+  </body>
+</html>

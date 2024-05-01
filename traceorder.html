@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="cards.css">
+  </head>
+
+  <body>
+    <table width="70%">
+      <tr>
+        <td>
+          <ul class="topnav">
+            <li><a href="index.html"><img src="http://127.0.0.1:5500/images/final-project.png"/></a></li>
+            <li class="right"><a href=""><img id="cart" src="" width="30px"/></a></li>
+            <li class="right"><a href="login.html">Login</a></li>
+            <li class="right"><a href="">Help</a></li>
+            <li class="right"><a href="traceorder.html">Track Order</a></li>
+          </ul>
+       </td>
+      </tr>
+    </table>
+    <H2>MY ORDERS</H2>
+    <div id="list"></div>
+   
+    <script>
+      let host = "http://localhost:8080";
+      let order = [];
+      let customer_id = getCookie("userId");
+      let flowerId = localStorage.getItem("flowerId");
+
+      displayOrders();
+
+      async function getAll() {
+        let request = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getCookie("jwtToken")
+            }
+        };
+
+        let response = await fetch(host + "/orders/" + customer_id, request);
+        let result = await response.json();
+        return result;
+      }
+
+      async function displayOrders() {
+        if(flowerId == null){
+           document.getElementById("cart").src = "http://localhost:5500/images/cart0.jpg";
+        } else {
+          document.getElementById("cart").src = "http://localhost:5500/images/cart1.jpg";
+        }
+   
+        orders = await getAll();
+        let list = document.getElementById("list");
+        
+        list.innerHTML = "";
+        if(orders.length == 0){
+            list.innerHTML = "You have no orders.";
+        } else {
+          for (let order of orders) {
+            let div = document.createElement("div");
+            div.className = "card";
+            let innerHtml = `
+            <h4>Recipient ID: ${order.recipient_id} &nbsp; </h4>
+            <h4>Flower ID: ${order.flower_id}</h4>
+            <h4>Delivery Date: $${order.delivery_date}</h4>
+            `;
+        
+            div.innerHTML = innerHtml;
+            list.appendChild(div);
+          }
+        }
+      }
+      function getCookie(name) {
+        function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+        var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+        return match ? match[1] : null;
+      }
+    </script>
+  </body>
+</html>
