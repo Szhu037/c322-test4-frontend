@@ -27,7 +27,7 @@
       <tr>
         <td>
           <ul class="topnav">
-            <li><a href="index.html"><img src="http://127.0.0.1:5500/images/final-project.png"/></a></li>
+            <li><a href="index.html"><img src="https://c322-test4-backend-latest.onrender.com/images/final-project.png"/></a></li>
             <li class="right"><a href=""><img id="cart" src="" width="30px"/></a></li>
             <li class="right"><a href="login.html">Login</a></li>
             <li class="right"><a href="">Help</a></li>
@@ -103,7 +103,7 @@
         </tr>
       </table>
     <script>
-       let host = "http://localhost:8080";
+       let host = "https://c322-test4-backend-latest.onrender.com";
        let flowerId = localStorage.getItem("flowerId");
        loadFlower(flowerId);
        
@@ -133,14 +133,14 @@
 
       async function loadFlower(flowerId){
         if(flowerId == null){
-           document.getElementById("cart").src = "http://localhost:5500/images/cart0.jpg";
+           document.getElementById("cart").src = "https://c322-test4-backend-latest.onrender.com/images/cart0.jpg";
         } else {
-          document.getElementById("cart").src = "http://localhost:5500/images/cart1.jpg";
+          document.getElementById("cart").src = "https://c322-test4-backend-latest.onrender.com/images/cart1.jpg";
         }
         let response = await fetch(host + "/flowers/"+flowerId);
         let flower = await response.json();
         document.getElementById("flowerInfo").innerHTML = "<hr><table width='100%'><tr><td align='left'><h2>" + flower.name + "</h2></td><td align='right'><h2>$" + flower.price+"</h2></td></tr></table><hr>";
-        document.getElementById("image").setAttribute("src","http://127.0.0.1:5500/images/"+flower.icon_file_name);
+        document.getElementById("image").setAttribute("src","https://c322-test4-backend-latest.onrender.com/images/"+flower.icon_file_name);
         document.getElementById("deliveryDate").innerHTML = localStorage.getItem("deliveryDate");
       }
       function continueNext(){

@@ -13,7 +13,7 @@
       <tr>
         <td>
           <ul class="topnav">
-            <li><a href="index.html"><img src="http://127.0.0.1:5500/images/final-project.png"/></a></li>
+            <li><a href="index.html"><img src="https://c322-test4-backend-latest.onrender.com/images/final-project.png"/></a></li>
             <li class="right"><a href=""><img id="cart" src="" width="30px"/></a></li>
             <li class="right"><a href="login.html">Login</a></li>
             <li class="right"><a href="">Help</a></li>
@@ -30,7 +30,7 @@
            <h3>-------</h3>
            <h5>She will love! Shop All Mother's Day Flowers and Gifts!</h5>
         </td>
-        <td width="30%"><img src="http://127.0.0.1:5500/images/mixed.jpg" height="200"/></td>
+        <td width="30%"><img src="https://c322-test4-backend-latest.onrender.com/images/mixed.jpg" height="200"/></td>
       </tr>
       <tr>
         <td>
@@ -82,7 +82,7 @@
     </table>
 
     <script>
-      let host = "http://localhost:8080";
+      let host = "https://c322-test4-backend-latest.onrender.com";
       let flowers = [];
       let sortBy = "";
       let type = "";
@@ -99,9 +99,9 @@
 
       async function displayFlowers() {
         if(flowerId == null){
-           document.getElementById("cart").src = "http://localhost:5500/images/cart0.jpg";
+           document.getElementById("cart").src = "https://c322-test4-backend-latest.onrender.com/images/cart0.jpg";
         } else {
-          document.getElementById("cart").src = "http://localhost:5500/images/cart1.jpg";
+          document.getElementById("cart").src = "https://c322-test4-backend-latest.onrender.com/images/cart1.jpg";
         }
         flowers = await getAll();
         let list = document.getElementById("list");
@@ -114,7 +114,7 @@
             order(flower.id,flower.icon_file_name);
           };
           let innerHtml = `
-          <img src="http://localhost:5500/images/${flower.icon_file_name}" alt="flower" style="width:100%">
+          <img src="https://c322-test4-backend-latest.onrender.com/images/${flower.icon_file_name}" alt="flower" style="width:100%">
           <h4>${flower.name} &nbsp; </h4>
           <h4>From $${flower.price}</h4>
           `;
